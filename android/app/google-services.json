@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "96703577471",
+    "project_id": "todo-list-auditoria",
+    "storage_bucket": "todo-list-auditoria.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:96703577471:android:75d29aa61c8642ce2b6e4a",
+        "android_client_info": {
+          "package_name": "com.example.todo_list_auditoria"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7dFLE4arT-Z1pCOZpfd5nuFLJqcai818"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
