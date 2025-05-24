@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:todo_list_auditoria/modules/home/pages/cubit/home_cubit.dart';
+import 'package:todo_list_auditoria/modules/home/pages/todo_form/todo_form_page.dart';
+import 'package:todo_list_auditoria/modules/home/pages/home/cubit/home_cubit.dart';
 import 'package:todo_list_auditoria/modules/shared/controllers/account_info/account_info_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,7 +17,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    cubit.fetchData();
+    cubit.fetchTodos();
     super.initState();
   }
 
@@ -32,6 +33,15 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [Text(user?.id.toString() ?? ""), Text(user?.email ?? "")],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const TodoFormPage()),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

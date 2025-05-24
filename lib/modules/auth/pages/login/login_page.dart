@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:todo_list_auditoria/modules/auth/pages/login/cubit/login_cubit.dart';
 import 'package:todo_list_auditoria/modules/auth/pages/register/register_page.dart';
-import 'package:todo_list_auditoria/modules/home/pages/home_page.dart';
+import 'package:todo_list_auditoria/modules/home/pages/home/home_page.dart';
 import 'package:todo_list_auditoria/modules/shared/components/button/button_component.dart';
 import 'package:todo_list_auditoria/modules/shared/components/text_form_field/text_form_field_component.dart';
 import 'package:todo_list_auditoria/modules/shared/validators/validators.dart';

@@ -9,7 +9,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   HomeCubit({required this.homeProvider}) : super(const HomeInitialState());
 
-  Future<void> fetchData() async {
+  Future<void> fetchTodos() async {
     emit(const HomeLoadingState());
     await Future.delayed(const Duration(seconds: 5));
 

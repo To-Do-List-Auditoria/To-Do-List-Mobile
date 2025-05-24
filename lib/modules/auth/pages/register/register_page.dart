@@ -56,7 +56,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: formKey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextFormFieldComponent(
                       label: "Email:",
