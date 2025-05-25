@@ -31,11 +31,11 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Homej'),
+        title: const Text('Home'),
         actions: [IconButton(icon: const Icon(Icons.logout), onPressed: () {})],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(25.0),
+        padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 0.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -147,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                         separatorBuilder:
-                            (context, index) => SizedBox(height: 15.0),
+                            (context, index) => SizedBox(height: 25.0),
                       );
                   }
                 },
