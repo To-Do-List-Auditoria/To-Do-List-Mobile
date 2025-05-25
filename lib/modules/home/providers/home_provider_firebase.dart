@@ -14,8 +14,20 @@ class HomeProviderFirebase implements HomeProvider {
   });
 
   @override
-  Future<void> fetchTodos() {
-    throw UnimplementedError();
+  Future<List<TodoModel>> fetchTodos() async {
+    try {
+      final response = firebaseFirestore
+          .collection("todos")
+          .where("userId", isEqualTo: FirebaseAuth.instance.currentUser?.uid);
+
+      final List<TodoModel> todos = await response.get().then(
+        (query) => query.docs.map((e) => TodoModel.fromFirebase(e)).toList(),
+      );
+
+      return todos;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
   }
 
   @override

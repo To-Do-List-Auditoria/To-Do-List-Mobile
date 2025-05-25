@@ -16,7 +16,12 @@ final class HomeLoadingState extends HomeState {
 }
 
 final class HomeSuccessState extends HomeState {
-  const HomeSuccessState();
+  final List<TodoModel> todos;
+
+  const HomeSuccessState({required this.todos});
+
+  @override
+  List<Object> get props => [todos];
 }
 
 final class HomeErrorState extends HomeState {

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_list_auditoria/modules/home/models/todo_model.dart';
 import 'package:todo_list_auditoria/modules/home/providers/home_provider.dart';
 
 part 'home_state.dart';
@@ -14,8 +15,8 @@ class HomeCubit extends Cubit<HomeState> {
     await Future.delayed(const Duration(seconds: 5));
 
     try {
-      await homeProvider.fetchTodos();
-      emit(const HomeSuccessState());
+      final result = await homeProvider.fetchTodos();
+      emit(HomeSuccessState(todos: result));
     } catch (e) {
       emit(const HomeErrorState());
     }
