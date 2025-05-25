@@ -12,7 +12,7 @@ class CardComponent extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       child: SizedBox(
         width: width,
-        child: Padding(padding: const EdgeInsets.all(8.0), child: child),
+        child: Padding(padding: const EdgeInsets.all(4.0), child: child),
       ),
     );
   }

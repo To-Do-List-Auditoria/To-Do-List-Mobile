@@ -51,6 +51,7 @@ class TextFormFieldComponent extends StatelessWidget {
         minLines: obscureText ? null : minLines,
         decoration: InputDecoration(
           labelText: label,
+          contentPadding: EdgeInsets.all(20.0),
           prefixIcon: Icon(prefixIcon),
           suffixIcon: IconButton(
             icon: Icon(suffixIcon),

@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:todo_list_auditoria/modules/home/pages/todo_form/todo_form_page.dart';
 import 'package:todo_list_auditoria/modules/home/pages/home/cubit/home_cubit.dart';
 import 'package:todo_list_auditoria/modules/shared/components/card/card_component.dart';
+import 'package:todo_list_auditoria/modules/shared/components/dialog/generic_dialog.dart';
 import 'package:todo_list_auditoria/modules/shared/components/loading/loading_component.dart';
 import 'package:todo_list_auditoria/modules/shared/controllers/account_info/account_info_controller.dart';
 
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Page'),
+        title: const Text('Homej'),
         actions: [IconButton(icon: const Icon(Icons.logout), onPressed: () {})],
       ),
       body: Padding(
@@ -108,9 +109,39 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               subtitle: Text(todo.description),
-                              trailing: IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () {},
+                              trailing: Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) {
+                                          return GenericDialog(
+                                            icon: Icons.delete,
+                                            content:
+                                                "Você tem certeza que deseja excluir?",
+                                            firstButtonTitle: "Excluir",
+                                            onTapFirstButton: () {
+                                              Navigator.pop(context);
+                                            },
+                                            secondButtonTitle: "Cancelar",
+                                            onTapSecondButton: () {
+                                              Navigator.pop(context);
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.edit),
+                                    onPressed: () {},
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -129,7 +160,15 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const TodoFormPage()),
+            MaterialPageRoute(
+              builder:
+                  (context) => TodoFormPage(
+                    onRegisterSuccess: () {
+                      GetIt.instance.get<HomeCubit>().fetchTodos();
+                      Navigator.pop(context);
+                    },
+                  ),
+            ),
           );
         },
         child: const Icon(Icons.add),

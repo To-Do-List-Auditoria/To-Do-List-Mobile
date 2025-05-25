@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+
 import 'package:todo_list_auditoria/modules/home/models/todo_model.dart';
 import 'package:todo_list_auditoria/modules/home/pages/todo_form/cubit/todo_form_cubit.dart';
 import 'package:todo_list_auditoria/modules/shared/components/button/button_component.dart';
@@ -8,7 +9,9 @@ import 'package:todo_list_auditoria/modules/shared/components/text_form_field/te
 import 'package:todo_list_auditoria/modules/shared/validators/validators.dart';
 
 class TodoFormPage extends StatefulWidget {
-  const TodoFormPage({super.key});
+  final VoidCallback onRegisterSuccess;
+
+  const TodoFormPage({super.key, required this.onRegisterSuccess});
 
   @override
   State<TodoFormPage> createState() => _TodoFormPageState();
@@ -39,7 +42,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("To-Do criado com sucesso!")),
               );
-              Navigator.pop(context);
+              widget.onRegisterSuccess();
 
             case FormErrorState():
               ScaffoldMessenger.of(context).showSnackBar(
@@ -57,6 +60,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
                   children: [
                     TextFormFieldComponent(
                       label: "Título",
+                      prefixIcon: Icons.title,
                       controller: titleController,
                       validator: (text) => Validadors.genericValidator(text),
                       keyboardType: TextInputType.text,
@@ -64,9 +68,13 @@ class _TodoFormPageState extends State<TodoFormPage> {
                     const SizedBox(height: 10.0),
                     TextFormFieldComponent(
                       label: "Descrição",
+                      prefixIcon: Icons.description,
+
                       controller: descriptionController,
                       validator: (text) => Validadors.genericValidator(text),
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 25,
+                      minLines: 5,
                     ),
                     const SizedBox(height: 20.0),
                     BlocBuilder(
