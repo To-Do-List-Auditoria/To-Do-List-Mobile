@@ -25,8 +25,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  bool isLoading = false;
-
   @override
   void initState() {
     super.initState();
@@ -39,22 +37,23 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Criar conta')),
-      body: BlocListener(
+      body: BlocListener<RegisterCubit, RegisterState>(
         bloc: cubit,
         listener: (context, state) {
           switch (state) {
+            case RegisterInitialState():
+              break;
+
             case RegisterLoadingState():
-              setState(() => isLoading = true);
+              break;
 
             case RegisterSuccessState():
-              setState(() => isLoading = false);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Conta criada com sucesso!")),
               );
               Navigator.pop(context);
 
             case RegisterErrorState():
-              setState(() => isLoading = false);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Erro ao criar conta!")),
               );
@@ -91,23 +90,27 @@ class _RegisterPageState extends State<RegisterPage> {
                       prefixIcon: Icons.lock,
                       controller: confirmPasswordController,
                       obscureText: true,
-                      validator:
-                          (text) => Validadors.confirmPasswordValidator(
-                            text,
-                            passwordController.text,
-                          ),
+                      validator: (text) => Validadors.confirmPasswordValidator(
+                        text,
+                        passwordController.text,
+                      ),
                     ),
                     const SizedBox(height: 20.0),
-                    ButtonComponent(
-                      title: "Criar conta",
-                      isLoading: isLoading,
-                      onTap: () {
-                        if (formKey.currentState!.validate()) {
-                          cubit.register(
-                            email: emailController.text,
-                            password: passwordController.text,
-                          );
-                        }
+                    BlocBuilder(
+                      bloc: cubit,
+                      builder: (context, state) {
+                        return ButtonComponent(
+                          title: "Criar conta",
+                          isLoading: state is RegisterLoadingState,
+                          onTap: () {
+                            if (formKey.currentState!.validate()) {
+                              cubit.register(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              );
+                            }
+                          },
+                        );
                       },
                     ),
                   ],

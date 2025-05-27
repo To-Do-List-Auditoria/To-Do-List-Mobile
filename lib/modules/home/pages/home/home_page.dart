@@ -35,7 +35,6 @@ class _HomePageState extends State<HomePage> {
           );
         }
       });
-
       await analyticsController.log(
         AnalyticsEvent(
           name: AnalyticsEventName.userLoggedOutWithSuccess,
@@ -46,7 +45,7 @@ class _HomePageState extends State<HomePage> {
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text("Erro ao sair: $e")));
+        ).showSnackBar(SnackBar(content: Text("Erro ao deslogar usuário")));
 
         await analyticsController.log(
           AnalyticsEvent(
@@ -207,8 +206,8 @@ class _HomePageState extends State<HomePage> {
                                         content:
                                             "Você tem certeza que deseja excluir?",
                                         firstButtonTitle: "Excluir",
-                                        onTapFirstButton:
-                                            () => deleteTodo(context, todo),
+                                        onTapFirstButton: () =>
+                                            deleteTodo(context, todo),
                                         secondButtonTitle: "Cancelar",
                                         onTapSecondButton: () {
                                           Navigator.pop(context);
@@ -221,8 +220,8 @@ class _HomePageState extends State<HomePage> {
                             ),
                           );
                         },
-                        separatorBuilder:
-                            (context, index) => SizedBox(height: 25.0),
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 25.0),
                       );
                   }
                 },
@@ -236,13 +235,12 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder:
-                  (context) => TodoFormPage(
-                    onRegisterSuccess: () {
-                      GetIt.instance.get<HomeCubit>().fetchTodos();
-                      Navigator.pop(context);
-                    },
-                  ),
+              builder: (context) => TodoFormPage(
+                onRegisterSuccess: () {
+                  GetIt.instance.get<HomeCubit>().fetchTodos();
+                  Navigator.pop(context);
+                },
+              ),
             ),
           );
         },
