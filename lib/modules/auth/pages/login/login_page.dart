@@ -6,6 +6,9 @@ import 'package:todo_list_auditoria/modules/auth/pages/register/register_page.da
 import 'package:todo_list_auditoria/modules/home/pages/home/home_page.dart';
 import 'package:todo_list_auditoria/modules/shared/components/button/button_component.dart';
 import 'package:todo_list_auditoria/modules/shared/components/text_form_field/text_form_field_component.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/analytics_controller.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/event/analytics_event.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/event/analytics_event_name.dart';
 import 'package:todo_list_auditoria/modules/shared/validators/validators.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,12 +20,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final cubit = GetIt.instance.get<LoginCubit>();
+  final analyticsController = GetIt.instance.get<AnalyticsController>();
 
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    analyticsController.log(
+      AnalyticsEvent(name: AnalyticsEventName.loginPageViewed),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

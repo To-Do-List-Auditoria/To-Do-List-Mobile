@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:todo_list_auditoria/modules/auth/pages/login/login_page.dart';
+import 'package:todo_list_auditoria/modules/home/models/todo_model.dart';
 import 'package:todo_list_auditoria/modules/home/pages/todo_form/todo_form_page.dart';
 import 'package:todo_list_auditoria/modules/home/pages/home/cubit/home_cubit.dart';
 import 'package:todo_list_auditoria/modules/shared/components/card/card_component.dart';
 import 'package:todo_list_auditoria/modules/shared/components/dialog/generic_dialog.dart';
 import 'package:todo_list_auditoria/modules/shared/components/loading/loading_component.dart';
 import 'package:todo_list_auditoria/modules/shared/controllers/account_info/account_info_controller.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/analytics_controller.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/event/analytics_event.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/event/analytics_event_name.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,11 +23,66 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final cubit = GetIt.instance.get<HomeCubit>();
   final accountInfoController = GetIt.instance.get<AccountInfoController>();
+  final analyticsController = GetIt.instance.get<AnalyticsController>();
+
+  Future<void> logout(BuildContext context) async {
+    try {
+      accountInfoController.logout().then((_) {
+        if (context.mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginPage()),
+          );
+        }
+      });
+
+      await analyticsController.log(
+        AnalyticsEvent(
+          name: AnalyticsEventName.userLoggedOutWithSuccess,
+          params: {"email": accountInfoController.getUser()!.email},
+        ),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Erro ao sair: $e")));
+
+        await analyticsController.log(
+          AnalyticsEvent(
+            name: AnalyticsEventName.userLoggedOutWithError,
+            params: {
+              "email": accountInfoController.getUser()!.email,
+              "error": e.toString(),
+            },
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> deleteTodo(BuildContext context, TodoModel todo) async {
+    cubit.deleteTodo(documentReference: todo.documentReference!);
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("To-Do apagado com sucesso!")));
+
+    Navigator.pop(context);
+  }
 
   @override
   void initState() {
-    cubit.fetchTodos();
     super.initState();
+
+    analyticsController.log(
+      AnalyticsEvent(
+        name: AnalyticsEventName.loginPageViewed,
+        params: {"email": accountInfoController.getUser()!.email},
+      ),
+    );
+
+    cubit.fetchTodos();
   }
 
   @override
@@ -32,7 +92,31 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
-        actions: [IconButton(icon: const Icon(Icons.logout), onPressed: () {})],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return GenericDialog(
+                    icon: Icons.logout,
+                    content: "Você tem certeza que deseja sair?",
+                    firstButtonTitle: "Sair",
+                    onTapFirstButton: () {
+                      logout(context);
+                    },
+                    secondButtonTitle: "Cancelar",
+                    onTapSecondButton: () {
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 0.0),
@@ -68,6 +152,7 @@ class _HomePageState extends State<HomePage> {
                     case HomeErrorState _:
                       return Center(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text("Erro ao carregar tarefas."),
                             SizedBox(height: 10.0),
@@ -83,6 +168,7 @@ class _HomePageState extends State<HomePage> {
                       if (state.todos.isEmpty) {
                         return Center(
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text("Nenhuma tarefa encontrada."),
                               SizedBox(height: 10.0),
@@ -109,39 +195,28 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               subtitle: Text(todo.description),
-                              trailing: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (context) {
-                                          return GenericDialog(
-                                            icon: Icons.delete,
-                                            content:
-                                                "Você tem certeza que deseja excluir?",
-                                            firstButtonTitle: "Excluir",
-                                            onTapFirstButton: () {
-                                              Navigator.pop(context);
-                                            },
-                                            secondButtonTitle: "Cancelar",
-                                            onTapSecondButton: () {
-                                              Navigator.pop(context);
-                                            },
-                                          );
+                              trailing: IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) {
+                                      return GenericDialog(
+                                        icon: Icons.delete,
+                                        content:
+                                            "Você tem certeza que deseja excluir?",
+                                        firstButtonTitle: "Excluir",
+                                        onTapFirstButton:
+                                            () => deleteTodo(context, todo),
+                                        secondButtonTitle: "Cancelar",
+                                        onTapSecondButton: () {
+                                          Navigator.pop(context);
                                         },
                                       );
                                     },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {},
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
                             ),
                           );

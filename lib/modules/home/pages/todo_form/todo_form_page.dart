@@ -6,6 +6,10 @@ import 'package:todo_list_auditoria/modules/home/models/todo_model.dart';
 import 'package:todo_list_auditoria/modules/home/pages/todo_form/cubit/todo_form_cubit.dart';
 import 'package:todo_list_auditoria/modules/shared/components/button/button_component.dart';
 import 'package:todo_list_auditoria/modules/shared/components/text_form_field/text_form_field_component.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/account_info/account_info_controller.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/analytics_controller.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/event/analytics_event.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/event/analytics_event_name.dart';
 import 'package:todo_list_auditoria/modules/shared/validators/validators.dart';
 
 class TodoFormPage extends StatefulWidget {
@@ -19,10 +23,23 @@ class TodoFormPage extends StatefulWidget {
 
 class _TodoFormPageState extends State<TodoFormPage> {
   final cubit = GetIt.instance.get<TodoFormCubit>();
+  final analyticsController = GetIt.instance.get<AnalyticsController>();
+  final accountInfoController = GetIt.instance.get<AccountInfoController>();
 
   final formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    analyticsController.log(
+      AnalyticsEvent(
+        name: AnalyticsEventName.createTodoPageViewed,
+        params: {"email": accountInfoController.getUser()!.email},
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

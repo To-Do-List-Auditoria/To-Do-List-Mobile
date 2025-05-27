@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
@@ -12,6 +13,7 @@ import 'package:todo_list_auditoria/modules/home/pages/home/cubit/home_cubit.dar
 import 'package:todo_list_auditoria/modules/home/providers/home_provider.dart';
 import 'package:todo_list_auditoria/modules/home/providers/home_provider_firebase.dart';
 import 'package:todo_list_auditoria/modules/shared/controllers/account_info/account_info_controller.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/analytics_controller.dart';
 
 class AppDependencies {
   static final injector = GetIt.instance;
@@ -19,6 +21,7 @@ class AppDependencies {
   Future<void> setupDependencies() async {
     await _setupFirebase();
     _setupAccountInfoController();
+    _setupAnalyticsController();
     _setupProviders();
     _setupCubits();
   }
@@ -32,6 +35,12 @@ class AppDependencies {
   void _setupAccountInfoController() {
     injector.registerLazySingleton(
       () => AccountInfoController(firebaseAuth: FirebaseAuth.instance),
+    );
+  }
+
+  void _setupAnalyticsController() {
+    injector.registerLazySingleton(
+      () => AnalyticsController(firebaseAnalytics: FirebaseAnalytics.instance),
     );
   }
 
@@ -51,16 +60,30 @@ class AppDependencies {
   void _setupCubits() {
     injector
       ..registerLazySingleton(
-        () => LoginCubit(authProvider: injector.get<AuthProvider>()),
+        () => LoginCubit(
+          authProvider: injector.get<AuthProvider>(),
+          analyticsController: injector.get<AnalyticsController>(),
+        ),
       )
       ..registerLazySingleton(
-        () => RegisterCubit(authProvider: injector.get<AuthProvider>()),
+        () => RegisterCubit(
+          authProvider: injector.get<AuthProvider>(),
+          analyticsController: injector.get<AnalyticsController>(),
+        ),
       )
       ..registerLazySingleton(
-        () => HomeCubit(homeProvider: injector.get<HomeProvider>()),
+        () => HomeCubit(
+          homeProvider: injector.get<HomeProvider>(),
+          analyticsController: injector.get<AnalyticsController>(),
+          accountInfoController: injector.get<AccountInfoController>(),
+        ),
       )
       ..registerLazySingleton(
-        () => TodoFormCubit(homeProvider: injector.get<HomeProvider>()),
+        () => TodoFormCubit(
+          homeProvider: injector.get<HomeProvider>(),
+          analyticsController: injector.get<AnalyticsController>(),
+          accountInfoController: injector.get<AccountInfoController>(),
+        ),
       );
   }
 }

@@ -4,6 +4,9 @@ import 'package:get_it/get_it.dart';
 import 'package:todo_list_auditoria/modules/auth/pages/register/cubit/register_cubit.dart';
 import 'package:todo_list_auditoria/modules/shared/components/button/button_component.dart';
 import 'package:todo_list_auditoria/modules/shared/components/text_form_field/text_form_field_component.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/analytics_controller.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/event/analytics_event.dart';
+import 'package:todo_list_auditoria/modules/shared/controllers/analytics/event/analytics_event_name.dart';
 import 'package:todo_list_auditoria/modules/shared/validators/validators.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -15,6 +18,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final cubit = GetIt.instance.get<RegisterCubit>();
+  final analyticsController = GetIt.instance.get<AnalyticsController>();
 
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
@@ -22,6 +26,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final confirmPasswordController = TextEditingController();
 
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    analyticsController.log(
+      AnalyticsEvent(name: AnalyticsEventName.registerPageViewed),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

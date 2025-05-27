@@ -15,4 +15,8 @@ class AccountInfoController {
 
     return UserModel(id: firebaseUser.uid, email: firebaseUser.email!);
   }
+
+  Future<void> logout() async {
+    await firebaseAuth.signOut();
+  }
 }

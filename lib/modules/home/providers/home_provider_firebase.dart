@@ -46,4 +46,16 @@ class HomeProviderFirebase implements HomeProvider {
       throw Exception(e.toString());
     }
   }
+
+  @override
+  Future<void> deleteTodo({
+    required DocumentReference documentReference,
+  }) async {
+    try {
+      final response = firebaseFirestore.collection("todos");
+      response.doc(documentReference.id).delete();
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }
