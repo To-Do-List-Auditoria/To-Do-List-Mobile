@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
         if (context.mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => LoginPage()),
+            MaterialPageRoute(builder: (_) => LoginPage()),
           );
         }
       });

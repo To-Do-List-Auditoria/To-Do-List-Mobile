@@ -38,77 +38,93 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: BlocListener(
-        bloc: cubit,
-        listener: (context, state) {
-          switch (state) {
-            case LoginLoadingState():
-              setState(() => isLoading = true);
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: BlocListener(
+          bloc: cubit,
+          listener: (context, state) {
+            switch (state) {
+              case LoginLoadingState():
+                setState(() => isLoading = true);
 
-            case LoginSuccessState():
-              setState(() => isLoading = false);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const HomePage()),
-              );
+              case LoginSuccessState():
+                setState(() => isLoading = false);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HomePage()),
+                );
 
-            case LoginErrorState():
-              setState(() => isLoading = false);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Erro ao realizar login!")),
-              );
-          }
-        },
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Form(
-                key: formKey,
+              case LoginErrorState():
+                setState(() => isLoading = false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Erro ao realizar login!")),
+                );
+            }
+          },
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TextFormFieldComponent(
-                      label: "Email:",
-                      prefixIcon: Icons.email,
-                      controller: emailController,
-                      validator: (text) => Validadors.emailValidator(text),
-                      keyboardType: TextInputType.emailAddress,
+                    Text(
+                      "To-Do List App",
+                      style: TextStyle(
+                        fontSize: 48.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    const SizedBox(height: 20.0),
-                    TextFormFieldComponent(
-                      label: "Senha:",
-                      prefixIcon: Icons.lock,
-                      controller: passwordController,
-                      obscureText: true,
-                      validator: (text) => Validadors.passwordValidator(text),
-                      keyboardType: TextInputType.text,
-                    ),
-                    const SizedBox(height: 40.0),
-                    ButtonComponent(
-                      title: "Entrar",
-                      isLoading: isLoading,
-                      onTap: () {
-                        if (formKey.currentState!.validate()) {
-                          cubit.login(
-                            emailController.text,
-                            passwordController.text,
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 20.0),
-                    ButtonComponent(
-                      title: "Criar conta",
-                      onTap:
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const RegisterPage(),
-                            ),
+                    SizedBox(height: 50.0),
+                    Form(
+                      key: formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextFormFieldComponent(
+                            label: "Email:",
+                            prefixIcon: Icons.email,
+                            controller: emailController,
+                            validator:
+                                (text) => Validadors.emailValidator(text),
+                            keyboardType: TextInputType.emailAddress,
                           ),
+                          const SizedBox(height: 20.0),
+                          TextFormFieldComponent(
+                            label: "Senha:",
+                            prefixIcon: Icons.lock,
+                            controller: passwordController,
+                            obscureText: true,
+                            validator:
+                                (text) => Validadors.passwordValidator(text),
+                            keyboardType: TextInputType.text,
+                          ),
+                          const SizedBox(height: 40.0),
+                          ButtonComponent(
+                            title: "Entrar",
+                            isLoading: isLoading,
+                            onTap: () {
+                              if (formKey.currentState!.validate()) {
+                                cubit.login(
+                                  emailController.text,
+                                  passwordController.text,
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 20.0),
+                          ButtonComponent(
+                            title: "Criar conta",
+                            onTap:
+                                () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const RegisterPage(),
+                                  ),
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
