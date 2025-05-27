@@ -29,7 +29,10 @@ class TodoFormCubit extends Cubit<TodoFormState> {
       await analyticsController.log(
         AnalyticsEvent(
           name: AnalyticsEventName.todoCreatedWithSuccess,
-          params: {"email": accountInfoController.getUser()!.email},
+          params: {
+            "email": accountInfoController.getUser()!.email,
+            "title": todo.title,
+          },
         ),
       );
     } catch (e) {
@@ -39,6 +42,7 @@ class TodoFormCubit extends Cubit<TodoFormState> {
           name: AnalyticsEventName.todoCreatedWithError,
           params: {
             "email": accountInfoController.getUser()!.email,
+            "title": todo.title,
             "error": e.toString(),
           },
         ),

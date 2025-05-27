@@ -31,7 +31,10 @@ class HomeCubit extends Cubit<HomeState> {
       await analyticsController.log(
         AnalyticsEvent(
           name: AnalyticsEventName.fetchTodosWithSuccess,
-          params: {"email": accountInfoController.getUser()!.email},
+          params: {
+            "email": accountInfoController.getUser()!.email,
+            "length": result.length.toString(),
+          },
         ),
       );
     } catch (e) {
@@ -59,7 +62,13 @@ class HomeCubit extends Cubit<HomeState> {
       final result = await homeProvider.fetchTodos();
       emit(HomeSuccessState(todos: result));
       await analyticsController.log(
-        AnalyticsEvent(name: AnalyticsEventName.todoDeletedWithSuccess),
+        AnalyticsEvent(
+          name: AnalyticsEventName.todoDeletedWithSuccess,
+          params: {
+            "email": accountInfoController.getUser()!.email,
+            "todoId": documentReference.id,
+          },
+        ),
       );
     } catch (e) {
       emit(const HomeErrorState());
@@ -68,6 +77,7 @@ class HomeCubit extends Cubit<HomeState> {
           name: AnalyticsEventName.todoDeletedWithError,
           params: {
             "email": accountInfoController.getUser()!.email,
+            "todoId": documentReference.id,
             "error": e.toString(),
           },
         ),
