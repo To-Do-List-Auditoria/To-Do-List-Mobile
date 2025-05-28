@@ -17,17 +17,8 @@ class AnalyticsController {
         logMap
           ..addAll({
             "date": DateTime.now().toIso8601String(),
-            "platform": Platform.isAndroid
-                ? "android"
-                : Platform.isIOS
-                    ? "ios"
-                    : Platform.isMacOS
-                        ? "macos"
-                        : Platform.isWindows
-                            ? "windows"
-                            : Platform.isLinux
-                                ? "linux"
-                                : "web",
+            "platform": Platform.operatingSystem,
+            "platformVersion": Platform.operatingSystemVersion,
           }),
       );
     } catch (e) {
